@@ -1,87 +1,40 @@
 /**
  * **Example k6 extension**
  *
- * @module example
+ * @module grafana-alerting
  */
-export as namespace example;
+export as namespace grafana_alerting;
 
 /**
- * Generate a personalized greeting message.
+ * Generate and optionally create a set of Grafana rules.
  *
- * @param name The name to be greeted (default "World")
+ * @param config
  */
-export declare function greeting(name: string): string
+export declare function GenerateGroups(config: GenerateConfig): GenerateOutput;
 
-/**
- * Encode the passed `input` string or ArrayBuffer object to base32 encoded string.
- * Available options for encoding parameter are:
- * - **std**: the standard encoding with `=` padding chars. This is the default.
- * - **rawstd**: like **std** but without `=` padding characters
- * - **hex**: the "Extended Hex Alphabet" encoding defined in RFC 4648. It is typically used in DNS.
- * - **rawhex**: like **hex** but without `=` padding characters
- *
- * @param input The input string or ArrayBuffer object to base32 encode.
- * @param encoding The base32 encoding to use.
- */
-export declare function b32encode(
-  input: string | ArrayBuffer,
-  encoding: string
-): string;
+export interface GenerateOutput {
+  // TODO: figure out if we can import the open api types directly
+  groups: object[];
+  // FIXME: change this when we fix the camel case issue in the conversion
+  input_config: GenerateConfig;
+}
 
-/**
- * Decode the passed base32 encoded `input` string into the unencoded original input in either binary or string formats.
- * Available options for encoding parameter are:
- * - **std**: the standard encoding with `=` padding chars. This is the default.
- * - **rawstd**: like **std** but without `=` padding characters
- * - **hex**: the "Extended Hex Alphabet" encoding defined in RFC 4648. It is typically used in DNS.
- * - **rawhex**: like **hex** but without `=` padding characters
- *
- * @param input The string to base64 decode.
- * @param encoding The base32 encoding to use.
- * @param format If "s" return the data as a string, otherwise if unspecified an ArrayBuffer object is returned.
- */
-export declare function b32decode(
-  input: string,
-  encoding?: string,
-  format?: string
-): string | ArrayBuffer;
+export interface UploadConfig {
+  grafanaURL: string;
+  username?: string;
+  password?: string;
+  token?: string;
+  orgId?: number;
+  folderUIDs: string[];
+}
 
-/**
- * Pseudo random number generator.
- */
-export declare class Random {
-  /**
-   * Initial seed for the generator.
-   * If it is changed, the generator will restart.
-   */
-  seed: number;
-
-  /**
-   * Create a new Random instance.
-   *
-   * The seed parameter is optional, if missing a random initial seed will be used.
-   *
-   * @param seed Initial seed for the generator
-   */
-  constructor(seed?: Number);
-
-  /**
-   * Generate a non-negative pseudo-random integer.
-   *
-   * The generated integer will be from the half-open interval [0,n).
-   * If the optional parameter n is missing, `Number.MAX_SAFE_INTEGER` will be used instead.
-   *
-   * @param n The upper bound, `Number.MAX_SAFE_INTEGER` if missing.
-   */
-  int(n: number): number;
-
-  /**
-   * Generate a non-negative pseudo-random float.
-   *
-   * The generated float will be from the half-open interval [0,n).
-   * If the optional parameter n is missing, `1` will be used instead.
-   *
-   * @param n The upper bound, `1` if missing.
-   */
-  float(n: number): number;
+export interface GenerateConfig {
+  alertRuleCount: number;
+  recordingRuleCount: number;
+  queryDatasource: string;
+  writeDatasource: string;
+  rulesPerGroup: number;
+  groupsPerFolder: number;
+  seed?: number;
+  uploadConfig?: UploadConfig;
 }
