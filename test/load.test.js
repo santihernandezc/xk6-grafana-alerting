@@ -55,7 +55,7 @@ export function setup() {
   let groupsPerFolder = envOrDefault("GROUPS_PER_FOLDER", 5);
 
   let input = {
-    nuke: true, // Ensure we start from a clean slate.
+    nuke: true, // Delete all auto-gen folders before starting.
     numAlerting,
     numRecording,
     rulesPerGroup,
@@ -65,25 +65,35 @@ export function setup() {
     username: token ? '' : username,
     password: token ? '' : password,
     orgId: 1,
+    concurrency: 100,
   };
 
-  console.log("Generating test data with input:", input);
-  let output = GenerateGroups(input);
+  // let output = GenerateGroups(input);
+  let output = {}
   return { output, commonRequestParams, url };
 }
 
-export default function ({ output: { groups, inputConfig }, commonRequestParams, url }) {
-  // verify the rules are created in grafana prometheus api as expected
-  console.log("Verifying created rules in Grafana", inputConfig);
+export default function ({ commonRequestParams, url }) {
+  // Verify the rules are created in Grafana's Prometheus API as expected.
   let prometheusResponse = http.get(`${url}/api/prometheus/grafana/api/v1/rules?group_limit=40`, {
     tags: {
       page_loaded: "1",
     },
     ...commonRequestParams,
   });
-  console.log(`Prometheus rules API response status: ${prometheusResponse.status}`);
   let prometheusData = JSON.parse(prometheusResponse.body);
-  console.log(`Prometheus rules API response body: ${prometheusResponse.body}`);
   let allGroups = prometheusData.data.groups;
-  expect(allGroups.length).toBe(2);
+  expect(allGroups.length).toBe(40);
+}
+
+export function teardown() {
+  const { url, token, username, password } = ensureConfig();
+  console.log("Tearing down test data in Grafana");
+  // GenerateGroups({
+  //   nuke: true, // Delete all auto-gen data.
+  //   grafanaURL: url,
+  //   token: token,
+  //   username: token ? '' : username,
+  //   password: token ? '' : password,
+  // })
 }
