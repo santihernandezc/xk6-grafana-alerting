@@ -36,11 +36,11 @@ const folderUIDBase = "load-test-folder-";
 
 export function setup() {
   const { url, token, username, password } = ensureConfig();
-  let commonRequestParams = buildRequestParams(username, password, token);
-  let numAlerting = envOrDefault("ALERT_RULE_COUNT", 100);
-  let numRecording = envOrDefault("RECORDING_RULE_COUNT", 100);
-  let rulesPerGroup = envOrDefault("RULES_PER_GROUP", 10);
-  let groupsPerFolder = envOrDefault("GROUPS_PER_FOLDER", 5);
+  const commonRequestParams = buildRequestParams(username, password, token);
+  const numAlerting = envOrDefault("ALERT_RULE_COUNT", 100);
+  const numRecording = envOrDefault("RECORDING_RULE_COUNT", 100);
+  const rulesPerGroup = envOrDefault("RULES_PER_GROUP", 10);
+  const groupsPerFolder = envOrDefault("GROUPS_PER_FOLDER", 5);
 
   let input = {
     nuke: true, // Delete all auto-gen folders before starting.
@@ -64,9 +64,10 @@ export function setup() {
 export default function ({ commonRequestParams, url }) {
   const dataSource = "grafanacloud-prom";
   const name = "A"; // Any rules containing an "A" in its name.
+  const groupLimit = 40;
 
-  let prometheusResponse = http.get(
-    `${url}/api/prometheus/grafana/api/v1/rules?group_limit=40&datasource_uid=${dataSource}&search.rule_name=${name}`,
+  const prometheusResponse = http.get(
+    `${url}/api/prometheus/grafana/api/v1/rules?group_limit=${groupLimit}&datasource_uid=${dataSource}&search.rule_name=${name}`,
     {
       tags: {
         page_loaded: "1",
@@ -74,11 +75,11 @@ export default function ({ commonRequestParams, url }) {
       ...commonRequestParams,
     },
   );
-  let prometheusData = JSON.parse(prometheusResponse.body);
+  const prometheusData = JSON.parse(prometheusResponse.body);
   const groups = prometheusData.data.groups;
 
   // Check that the limit is being applied.
-  expect(groups.length).toBeLessThanOrEqual(40);
+  expect(groups.length).toBeLessThanOrEqual(groupLimit);
 
   // Check that all rules in all groups are querying the expected data source.
   for (const group of groups) {
