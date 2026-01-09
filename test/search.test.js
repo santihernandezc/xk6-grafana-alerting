@@ -57,8 +57,8 @@ export function setup() {
   };
 
   console.log("Creating test data in Grafana");
-  let output = GenerateGroups(input);
-  return { output, commonRequestParams, url };
+  GenerateGroups(input);
+  return { commonRequestParams, url };
 }
 
 export default function ({ commonRequestParams, url }) {
