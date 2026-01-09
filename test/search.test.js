@@ -2,21 +2,7 @@ import { GenerateGroups } from "k6/x/grafana-alerting";
 import http from "k6/http";
 import encoding from "k6/encoding";
 import { expect } from "https://jslib.k6.io/k6-testing/0.6.1/index.js";
-
-function envOrDefault(envVarName, def) {
-  const envVar = __ENV[envVarName];
-  return envVar ?? def;
-}
-
-// ensureConfig ensures the simulation has valid parameters and builds a Grafana API for simulation testing.
-function ensureConfig() {
-  return {
-    url: envOrDefault("GRAFANA_URL", "http://localhost:3000"),
-    username: envOrDefault("GRAFANA_ADMIN_USER", "admin"),
-    password: envOrDefault("GRAFANA_ADMIN_PASSWORD", "admin"),
-    token: envOrDefault("GRAFANA_API_TOKEN", ""),
-  };
-}
+import { envOrDefault, ensureConfig } from "./config.js";
 
 export const options = {
   // This could take a while depending on the load.
