@@ -77,8 +77,10 @@ export function setup() {
 
 export default function ({ commonRequestParams, url }) {
   const dataSource = "grafanacloud-prom";
+  const name = "A"; // Any rules containing an "A" in its name.
+
   let prometheusResponse = http.get(
-    `${url}/api/prometheus/grafana/api/v1/rules?group_limit=40&datasource_uid=${dataSource}`,
+    `${url}/api/prometheus/grafana/api/v1/rules?group_limit=40&datasource_uid=${dataSource}&search.rule_name=${name}`,
     {
       tags: {
         page_loaded: "1",
