@@ -68,6 +68,7 @@ export function setup() {
     concurrency: 100,
   };
 
+  console.log("Creating test data in Grafana");
   let output = GenerateGroups(input);
   return { output, commonRequestParams, url };
 }
