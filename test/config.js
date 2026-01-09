@@ -3,7 +3,7 @@ export function envOrDefault(envVarName, def) {
   return envVar ?? def;
 }
 
-// ensureConfig ensures the simulation has valid parameters and builds a Grafana API for simulation testing.
+// ensureConfig builds a configuration for the API using environment variables and defaults.
 export function ensureConfig() {
   return {
     url: envOrDefault("GRAFANA_URL", "http://localhost:3000"),
