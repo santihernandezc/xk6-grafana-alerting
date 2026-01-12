@@ -36,10 +36,10 @@ export const options = {
       preAllocatedVUs: 10,
       maxVUs: 100, // if the preAllocatedVUs are not enough, we can initialize more
       stages: [
-        { target: 1, duration: "30s" }, // Start with 1 iteration per second for 30s.
-        { target: 5, duration: "30s" }, // Ramp up linearly (over 30s) to 5 iterations per second.
-        { target: 5, duration: "1m" }, // Maintain 5 iterations per second over the next minute.
-        { target: 1, duration: "30s" }, // Ramp down to 1 iteration per second.
+        { target: 1, duration: "30s" }, // Start with 1 iteration per second for 30s
+        { target: 5, duration: "30s" }, // Ramp up linearly (over 30s) to 5 iterations per second
+        { target: 5, duration: "1m" }, // Maintain 5 iterations per second over the next minute
+        { target: 1, duration: "30s" }, // Ramp down to 1 iteration per second
       ],
     },
   },
@@ -69,7 +69,9 @@ export function setup() {
 
   console.log("Creating test data in Grafana");
   GenerateGroups(input);
-  return { commonRequestParams, url };
+
+  const expGroups = (numAlerting + numRecording) / rulesPerGroup;
+  return { commonRequestParams, url, expGroups };
 }
 
 export function nameAndDsFilters({ commonRequestParams, url }) {
